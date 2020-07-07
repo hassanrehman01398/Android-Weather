@@ -39,6 +39,7 @@ public class AboutFragment extends DialogFragment {
 
   @BindView(R.id.english_button)
   ExtendedFloatingActionButton englishButton;
+  @BindView(R.id.persian_button)
   ExtendedFloatingActionButton persianButton;
   @BindView(R.id.toggle_info_button)
   ImageButton toggleInfoButton;
@@ -71,7 +72,9 @@ public class AboutFragment extends DialogFragment {
         versionName = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
       } catch (PackageManager.NameNotFoundException e) {
         // do nothing
-      };
+      }
+      setTextWithLinks(view.findViewById(R.id.text_application_info), getString(R.string.application_info_text, versionName));
+      setTextWithLinks(view.findViewById(R.id.text_developer_info), getString(R.string.developer_info_text));
       setTextWithLinks(view.findViewById(R.id.text_design_api), getString(R.string.design_api_text));
       setTextWithLinks(view.findViewById(R.id.text_libraries), getString(R.string.libraries_text));
       setTextWithLinks(view.findViewById(R.id.text_license), getString(R.string.license_text));
@@ -123,6 +126,24 @@ public class AboutFragment extends DialogFragment {
     dismiss();
     if (getFragmentManager() != null) {
       getFragmentManager().popBackStack();
+    }
+  }
+
+  @OnClick({R.id.english_button, R.id.persian_button})
+  void handleChangeLanguage(View view) {
+    switch (view.getId()) {
+      case R.id.english_button:
+        if (currentLanguage.equals(LocaleManager.LANGUAGE_PERSIAN)) {
+          MyApplication.localeManager.setNewLocale(activity, LocaleManager.LANGUAGE_ENGLISH);
+          restartActivity();
+        }
+        break;
+      case R.id.persian_button:
+        if (currentLanguage.equals(LocaleManager.LANGUAGE_ENGLISH)) {
+          MyApplication.localeManager.setNewLocale(activity, LocaleManager.LANGUAGE_PERSIAN);
+          restartActivity();
+        }
+        break;
     }
   }
 

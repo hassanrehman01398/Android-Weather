@@ -41,8 +41,8 @@ public class DbUtil {
    */
   public static Query<ItemHourlyDB> getItemHourlyDBQuery(Box<ItemHourlyDB> itemHourlyDBBox, long fiveDayWeatherId) {
     return itemHourlyDBBox.query()
-            .equal(ItemHourlyDB_.fiveDayWeatherId, fiveDayWeatherId)
-            .build();
+        .equal(ItemHourlyDB_.fiveDayWeatherId, fiveDayWeatherId)
+        .build();
   }
 
   /**

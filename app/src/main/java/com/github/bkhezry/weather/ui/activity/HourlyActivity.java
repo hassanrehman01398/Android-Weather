@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -95,7 +94,6 @@ public class HourlyActivity extends AppCompatActivity {
 
   private void setVariables() {
     Intent intent = getIntent();
-    Log.d("HELLO","HEE");
     fiveDayWeather = intent.getParcelableExtra(Constants.FIVE_DAY_WEATHER_ITEM);
     BoxStore boxStore = MyApplication.getBoxStore();
     itemHourlyDBBox = boxStore.boxFor(ItemHourlyDB.class);

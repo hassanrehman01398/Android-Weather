@@ -164,7 +164,7 @@ public class MultipleDaysFragment extends DialogFragment {
     ApiService apiService = ApiClient.getClient().create(ApiService.class);
     disposable.add(
         apiService.getMultipleDaysWeather(
-            cityName, Constants.UNITS, defaultLang,5, apiKey)
+            cityName, Constants.UNITS, defaultLang, 16, apiKey)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableSingleObserver<MultipleDaysWeatherResponse>() {

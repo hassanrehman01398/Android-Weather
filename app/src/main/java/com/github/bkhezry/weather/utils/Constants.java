@@ -85,7 +85,7 @@ public class Constants {
   public static final String LAST_STORED_MULTIPLE_DAYS = "last-stored-multiple-days";
   public static final String OPEN_WEATHER_MAP_WEBSITE = "https://home.openweathermap.org/api_keys";
 
-  public static final String API_KEY = "e5c256b7940686e7620e95e5cd053f0a";
+  public static final String API_KEY = "api-key";
   public static final String LANGUAGE = "language";
   public static final String DARK_THEME = "dark-theme";
   public static final String FIVE_DAY_WEATHER_ITEM = "five-day-weather-item";

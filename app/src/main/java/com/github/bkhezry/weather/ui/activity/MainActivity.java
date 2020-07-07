@@ -4,13 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
-import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -27,7 +25,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
-import com.github.bkhezry.weather.CityDetail;
 import com.github.bkhezry.weather.R;
 import com.github.bkhezry.weather.model.CityInfo;
 import com.github.bkhezry.weather.model.currentweather.CurrentWeatherResponse;
@@ -40,6 +37,7 @@ import com.github.bkhezry.weather.model.fivedayweather.FiveDayResponse;
 import com.github.bkhezry.weather.model.fivedayweather.ItemHourly;
 import com.github.bkhezry.weather.service.ApiService;
 import com.github.bkhezry.weather.ui.fragment.AboutFragment;
+import com.github.bkhezry.weather.ui.fragment.MultipleDaysFragment;
 import com.github.bkhezry.weather.utils.ApiClient;
 import com.github.bkhezry.weather.utils.AppUtil;
 import com.github.bkhezry.weather.utils.Constants;
@@ -79,7 +77,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
 public class MainActivity extends AppCompatActivity {
-String cityname="";
+
   @BindView(R.id.recycler_view)
   RecyclerView recyclerView;
   @BindView(R.id.temp_text_view)
@@ -114,14 +112,11 @@ String cityname="";
   NestedScrollView nestedScrollView;
   @BindView(R.id.bar)
   BottomAppBar bar;
-
   private FastAdapter<FiveDayWeather> mFastAdapter;
-private ItemAdapter<FiveDayWeather> mItemAdapter;
+  private ItemAdapter<FiveDayWeather> mItemAdapter;
   private CompositeDisposable disposable = new CompositeDisposable();
   private String defaultLang = "en";
   private List<FiveDayWeather> fiveDayWeathers;
-
- // private List<weather_five> weather_five;
   private ApiService apiService;
   private FiveDayWeather todayFiveDayWeather;
   private Prefser prefser;
@@ -131,7 +126,6 @@ private ItemAdapter<FiveDayWeather> mItemAdapter;
   private DataSubscriptionList subscriptions = new DataSubscriptionList();
   private boolean isLoad = false;
   private CityInfo cityInfo;
-  private List<FiveDayWeather> data;
   private String apiKey;
   private Typeface typeface;
 
@@ -159,75 +153,6 @@ private ItemAdapter<FiveDayWeather> mItemAdapter;
       @Override
       public boolean onQueryTextSubmit(String query) {
         requestWeather(query, true);
-
-//        data.clear();
-//        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-//        String appId = "6dcbc9f4f580d0b82ea6b353e7887715";
-//        String url = "https://api.openweathermap.org/data/2.5/forecast?q=" + query + "&appid=" + appId;
-//        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-//          @Override
-//          public void onResponse(String response) {
-//            Log.i("MyLog response", response);
-//            try {
-//              JSONObject root = new JSONObject(response);
-//              JSONArray jsonArray = root.getJSONArray("list");
-//              weather_five= new ArrayList<>();
-//
-//              for (int i = 0; i < jsonArray.length(); i++) {
-//                JSONObject jsonDate = jsonArray.getJSONObject(i);
-//                Date date = new Date(jsonDate.getLong("dt") * 1000);
-//                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy 'T' HH:mm");
-//                String dateStr = sdf.format(date);
-//
-//                JSONObject main = jsonDate.getJSONObject("main");
-//                JSONArray weather = jsonDate.getJSONArray("weather");
-//                int minTemp  = (int) (main.getDouble("temp_min") - 273.15);
-//                int maxTemp  = (int) (main.getDouble("temp_max") - 273.15);
-//                int pressure = main.getInt("pressure");
-//                int humidity = main.getInt("humidity");
-//                String image = weather.getJSONObject(0).getString("main");
-//                int day = 0;
-////                for (ListItem item : list) {
-//                  Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-//                  Calendar newCalendar = AppUtil.addDays(calendar, day);
-//                  weather_five fiveDayWeather = new weather_five();
-//                //  weather_five.setWeatherId(item.getWeather().get(0).getId());
-//                 // weather_five.setDt(item.getDt());
-//            //    weather_fiv
-//               fiveDayWeather.setMaxTemp(maxTemp);
-//                fiveDayWeather.setMinTemp(minTemp);
-//                fiveDayWeather.setPression(pressure);
-//                fiveDayWeather.setHumidity(humidity);
-//                fiveDayWeather.setImage(image);
-//              //  fiveDayWeather.setTemp(item.getTemp().getDay());
-//                fiveDayWeather.setColor(colors[day]);
-//                fiveDayWeather.setColorAlpha(colorsAlpha[day]);
-//              //  fiveDayWeather.setTimestampStart(AppUtil.getStartOfDayTimestamp(newCalendar));
-//                //fiveDayWeather.setTimestampEnd(AppUtil.getEndOfDayTimestamp(newCalendar));
-//                  weather_five.add(fiveDayWeather);
-//                  day++;
-//  //              }
-
-//                weather_five weatherItem = new weather_five(maxTemp, minTemp, pressure, humidity, image, dateStr);
-
-      //        }
-//              Log.i("MyLog size data", String.valueOf(data.size()));
-             // model.notifyDataSetChanged();
-  //            mItemAdapter.clear();
-    //          mItemAdapter.add(data);
-           // }
-//            } catch (Exception e) {
-//              e.printStackTrace();
-//            }
-//          }
-//        }, new Response.ErrorListener() {
-//          @Override
-//          public void onErrorResponse(VolleyError error) {
-//            Log.e("MyLog", "Connection Problem");
-//          }
-//        });
-
-        //queue.add(request);
         return false;
       }
 
@@ -300,7 +225,7 @@ private ItemAdapter<FiveDayWeather> mItemAdapter;
     recyclerView.setItemAnimator(new DefaultItemAnimator());
     recyclerView.setAdapter(mFastAdapter);
     recyclerView.setFocusable(false);
-   mFastAdapter.withOnClickListener(new OnClickListener<FiveDayWeather>() {
+    mFastAdapter.withOnClickListener(new OnClickListener<FiveDayWeather>() {
       @Override
       public boolean onClick(@Nullable View v, @NonNull IAdapter<FiveDayWeather> adapter, @NonNull FiveDayWeather item, int position) {
         Intent intent = new Intent(MainActivity.this, HourlyActivity.class);
@@ -374,11 +299,8 @@ private ItemAdapter<FiveDayWeather> mItemAdapter;
 
   private void requestWeather(String cityName, boolean isSearch) {
     if (AppUtil.isNetworkConnected()) {
-      Log.d("AHMAD",cityName);
-      cityname=cityName;
       getCurrentWeather(cityName, isSearch);
-      getFiveDaysHourlyWeather(cityName);
-   //   getFiveDaysWeather(cityName);
+      getFiveDaysWeather(cityName);
     } else {
       SnackbarUtil
           .with(swipeContainer)
@@ -510,20 +432,15 @@ private ItemAdapter<FiveDayWeather> mItemAdapter;
   }
 
   private void getFiveDaysWeather(String cityName) {
-
-
-    Log.d("city_name1",cityName);
-
     disposable.add(
         apiService.getMultipleDaysWeather(
-            cityName, Constants.UNITS, defaultLang, 2, getResources().getString(R.string.open_weather_map_api))
+            cityName, Constants.UNITS, defaultLang, 5, apiKey)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableSingleObserver<MultipleDaysWeatherResponse>() {
               @Override
               public void onSuccess(MultipleDaysWeatherResponse response) {
-                Log.d("haclk","giag");
-     //           handleFiveDayResponse(response, cityName);
+                handleFiveDayResponse(response, cityName);
               }
 
               @Override
@@ -534,37 +451,33 @@ private ItemAdapter<FiveDayWeather> mItemAdapter;
     );
   }
 
-//  private void handleFiveDayResponse(ListItem response, String cityName) {
-//    Log.d("hello","bro");
-//    fiveDayWeathers = new ArrayList<>();
-//    List<ListItem> list = response.getList();
-//    int day = 0;
-//    for (ListItem item : list) {
-//      Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-//      Calendar newCalendar = AppUtil.addDays(calendar, day);
-//      FiveDayWeather fiveDayWeather = new FiveDayWeather();
-//      fiveDayWeather.setWeatherId(item.getWeather().get(0).getId());
-//      fiveDayWeather.setDt(item.getDt());
-//      fiveDayWeather.setMaxTemp(item.getTemp().getMax());
-//      fiveDayWeather.setMinTemp(item.getTemp().getMin());
-//      fiveDayWeather.setTemp(item.getTemp().getDay());
-//      fiveDayWeather.setColor(colors[day]);
-//      fiveDayWeather.setColorAlpha(colorsAlpha[day]);
-//      fiveDayWeather.setTimestampStart(AppUtil.getStartOfDayTimestamp(newCalendar));
-//      fiveDayWeather.setTimestampEnd(AppUtil.getEndOfDayTimestamp(newCalendar));
-//      fiveDayWeathers.add(fiveDayWeather);
-//      day++;
-//    }
-//    Log.d("big","bro");
-//    getFiveDaysHourlyWeather(cityName);
-//  }
+  private void handleFiveDayResponse(MultipleDaysWeatherResponse response, String cityName) {
+    fiveDayWeathers = new ArrayList<>();
+    List<ListItem> list = response.getList();
+    int day = 0;
+    for (ListItem item : list) {
+      Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+      Calendar newCalendar = AppUtil.addDays(calendar, day);
+      FiveDayWeather fiveDayWeather = new FiveDayWeather();
+      fiveDayWeather.setWeatherId(item.getWeather().get(0).getId());
+      fiveDayWeather.setDt(item.getDt());
+      fiveDayWeather.setMaxTemp(item.getTemp().getMax());
+      fiveDayWeather.setMinTemp(item.getTemp().getMin());
+      fiveDayWeather.setTemp(item.getTemp().getDay());
+      fiveDayWeather.setColor(colors[day]);
+      fiveDayWeather.setColorAlpha(colorsAlpha[day]);
+      fiveDayWeather.setTimestampStart(AppUtil.getStartOfDayTimestamp(newCalendar));
+      fiveDayWeather.setTimestampEnd(AppUtil.getEndOfDayTimestamp(newCalendar));
+      fiveDayWeathers.add(fiveDayWeather);
+      day++;
+    }
+    getFiveDaysHourlyWeather(cityName);
+  }
 
   private void getFiveDaysHourlyWeather(String cityName) {
-
-    Log.d("city_name",cityName);
     disposable.add(
         apiService.getFiveDaysWeather(
-            cityName, Constants.UNITS, defaultLang, getResources().getString(R.string.open_weather_map_api))
+            cityName, Constants.UNITS, defaultLang, apiKey)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableSingleObserver<FiveDayResponse>() {
@@ -589,23 +502,25 @@ private ItemAdapter<FiveDayWeather> mItemAdapter;
     if (!itemHourlyDBBox.isEmpty()) {
       itemHourlyDBBox.removeAll();
     }
-  //  for (FiveDayWeather fiveDayWeather : fiveDayWeathers) {
-    //  long fiveDayWeatherId = fiveDayWeatherBox.put(fiveDayWeather);
+    for (FiveDayWeather fiveDayWeather : fiveDayWeathers) {
+      long fiveDayWeatherId = fiveDayWeatherBox.put(fiveDayWeather);
       ArrayList<ItemHourly> listItemHourlies = new ArrayList<>(response.getList());
       for (ItemHourly itemHourly : listItemHourlies) {
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
         calendar.setTimeInMillis(itemHourly.getDt() * 1000L);
-//
-//
-       ItemHourlyDB itemHourlyDB = new ItemHourlyDB();
+        if (calendar.getTimeInMillis()
+            <= fiveDayWeather.getTimestampEnd()
+            && calendar.getTimeInMillis()
+            > fiveDayWeather.getTimestampStart()) {
+          ItemHourlyDB itemHourlyDB = new ItemHourlyDB();
           itemHourlyDB.setDt(itemHourly.getDt());
-        //  itemHourlyDB.setFiveDayWeatherId(fiveDayWeatherId);
+          itemHourlyDB.setFiveDayWeatherId(fiveDayWeatherId);
           itemHourlyDB.setTemp(itemHourly.getMain().getTemp());
           itemHourlyDB.setWeatherCode(itemHourly.getWeather().get(0).getId());
           itemHourlyDBBox.put(itemHourlyDB);
         }
-     // }
-   // }
+      }
+    }
   }
 
 
@@ -617,20 +532,7 @@ private ItemAdapter<FiveDayWeather> mItemAdapter;
 
   @OnClick(R.id.next_days_button)
   public void multipleDays() {
-    //AppUtil.showFragment(new MultipleDaysFragment(), getSupportFragmentManager(), true);
-
-        if(cityname.equals("")) {
-          Toast toast = Toast.makeText(getApplicationContext(), "Please enter a city name!", Toast.LENGTH_SHORT);
-          toast.show();
-          return;
-        }
-
-        Log.d("cityname",cityname);
-        Intent intent = new Intent(getApplicationContext(), CityDetail.class);
-       // String city = etSearch.getText().toString();
-        intent.putExtra("CITY_NAME", cityname);
-        startActivity(intent);
-
+    AppUtil.showFragment(new MultipleDaysFragment(), getSupportFragmentManager(), true);
   }
 
   @Override
